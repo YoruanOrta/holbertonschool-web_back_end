@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 """Spawns `n` coroutines with max delay and returns sorted delays."""
 import asyncio
 from typing import List

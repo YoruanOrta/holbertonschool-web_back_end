@@ -30,6 +30,6 @@ By the end of this project, you should be able to explain the following concepts
 ## Tasks List
 
 ### Mandatory
-1. **Async Generator**
-2. **Async Comprehensions**
-3. **Run time for four parallel comprehensions**
+0. **Async Generator**
+1. **Async Comprehensions**
+2. **Run time for four parallel comprehensions**

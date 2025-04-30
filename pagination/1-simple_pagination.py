@@ -13,8 +13,8 @@ def index_range(page: int, page_size: int) -> Tuple[int, int]:
     Return a tuple of start and end index for pagination
     """
     start_index = (page - 1) * page_size
-    end_index = page * page_size
-    return start_index, end_index
+    end_index = start_index + page_size
+    return (start_index, end_index)
 
 
 class Server:
@@ -40,8 +40,10 @@ class Server:
         """
         Return the appropriate page of the dataset
         """
-        assert isinstance(page, int) and page > 0, "page must be a positive integer"
-        assert isinstance(page_size, int) and page_size > 0, "page_size must be a positive integer"
+        assert isinstance(page, int) and page > 0, "page must be a "
+        "positive integer"
+        assert isinstance(page_size, int) and page_size > 0, "page_size"
+        " must be a positive integer"
 
         start_index, end_index = index_range(page, page_size)
         data = self.dataset()

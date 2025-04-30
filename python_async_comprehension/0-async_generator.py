@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-This module defines an asynchronous generator function that yields 10 
-random floating-point numbers between 0 and 10, with a 1-second delay 
+This module defines an asynchronous generator function that yields 10
+random floating-point numbers between 0 and 10, with a 1-second delay
 between each. It demonstrates the use of `async def` and `yield` for
 asynchronous programming.
 """

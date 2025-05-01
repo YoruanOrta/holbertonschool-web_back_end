@@ -4,12 +4,12 @@ Deletion-resilient hypermedia pagination
 """
 
 import csv
-from typing import List, Dict, Any
+from typing import List, Dict
 
 
 class Server:
-    """Server class to paginate a database of popular baby names.
-    """
+    """Server class to paginate a database of popular baby names."""
+
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
@@ -22,40 +22,49 @@ class Server:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
-            self.__dataset = dataset[1:]  # Skip header
+            self.__dataset = dataset[1:]  # Exclude header
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
         """Dataset indexed by sorting position, starting at 0"""
         if self.__indexed_dataset is None:
-            dataset = self.dataset()
             self.__indexed_dataset = {
-                i: dataset[i] for i in range(len(dataset))
+                i: row for i, row in enumerate(self.dataset())
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None,
-                        page_size: int = 10) -> Dict[str, Any]:
-        """Return a page of the dataset with index resilience to deletions"""
-        assert isinstance(index, int) and index >= 0
-        indexed_data = self.indexed_dataset()
-        assert index < len(self.dataset())
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """
+        Fetch a page with a specified size from an indexed dataset,
+        accounting for deletions.
 
+        Args:
+            index (int): The current start index of the return page.
+            page_size (int): The number of items per page.
+
+        Returns:
+            Dict: A dictionary containing the index,
+            data, page size, next index.
+        """
+        if index is None:
+            index = 0
+        assert 0 <= index < len(self.__indexed_dataset), "Index out of range."
+
+        dataset = self.indexed_dataset()
+        keys = sorted(dataset.keys())  # Get sorted list of existing indexes
         data = []
-        current_index = index
-        collected = 0
 
-        # Skip missing indexes due to deletion and collect valid rows
-        while collected < page_size and current_index < len(self.dataset()):
-            item = indexed_data.get(current_index)
-            if item is not None:
-                data.append(item)
-                collected += 1
+        current_index = index
+        while len(data) < page_size and current_index <= max(keys):
+            if current_index in dataset:
+                data.append(dataset[current_index])
             current_index += 1
+
+        next_index = current_index if current_index < max(keys) else None
 
         return {
             'index': index,
-            'next_index': current_index,
+            'next_index': next_index,
             'page_size': len(data),
             'data': data
         }

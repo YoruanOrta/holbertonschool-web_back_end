@@ -1,2 +1,2 @@
-// Prints the number of all documents in the "school" collection
-print(db.school.countDocuments({}))
+// Display the number of documents in the collection school
+db.school.count()

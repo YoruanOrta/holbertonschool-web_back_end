@@ -10,8 +10,8 @@ function countStudents(path) {
         return;
       }
 
-      const lines = data.split('\n').filter(line => line.trim() !== '');
-      const header = lines.shift();
+      const lines = data.split('\n').filter((line) => line.trim() !== '');
+      // nada, eliminas la línea
       const students = {};
 
       for (const line of lines) {

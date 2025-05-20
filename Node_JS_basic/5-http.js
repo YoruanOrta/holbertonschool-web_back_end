@@ -1,6 +1,7 @@
 // 5-http.js
 
 const http = require('http');
+const fs = require('fs');
 const countStudents = require('./3-read_file_async');
 
 const database = process.argv[2];
@@ -13,9 +14,6 @@ const app = http.createServer((req, res) => {
   } else if (req.url === '/students') {
     countStudents(database)
       .then(() => {
-        // countStudents already logs to console, but we need to return the message manually here
-        // We re-read the data to format the response ourselves
-        const fs = require('fs');
         fs.readFile(database, 'utf8', (err, data) => {
           if (err) {
             res.statusCode = 500;
@@ -23,8 +21,9 @@ const app = http.createServer((req, res) => {
             return;
           }
 
-          const lines = data.split('\n').filter(line => line.trim() !== '');
-          const header = lines.shift();
+          const lines = data.split('\n').filter((line) => line.trim() !== '');
+          lines.shift(); // Elimina el encabezado (header), ya no se guarda en una variable
+
           const students = {};
 
           for (const line of lines) {
@@ -47,7 +46,7 @@ const app = http.createServer((req, res) => {
             response += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
           }
 
-          res.end(response.trim()); // remove final newline
+          res.end(response.trim());
         });
       })
       .catch(() => {

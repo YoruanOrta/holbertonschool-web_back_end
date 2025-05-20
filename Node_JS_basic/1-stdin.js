@@ -7,7 +7,6 @@ process.stdin.on('data', (data) => {
   console.log(`Your name is: ${input}`);
 });
 
-// Cuando el usuario termina (Ctrl+D o fin de stream)
 process.stdin.on('end', () => {
   console.log('This important software is now closing');
 });

@@ -1,44 +1,63 @@
-// 7-http_express.js
-
 const express = require('express');
-const countStudents = require('./3-read_file_async');
+const fs = require('fs');
 
 const app = express();
 const port = 1245;
-const databaseFile = process.argv[2]; // command-line argument
 
+// Function to read and process student data
+function countStudents(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, 'utf8', (err, data) => {
+      if (err) {
+        reject(new Error('Cannot load the database'));
+        return;
+      }
+
+      const lines = data.trim().split('\n');
+      const students = lines.slice(1).filter((line) => line.trim() !== '');
+
+      const total = students.length;
+      const fields = {};
+
+      students.forEach((line) => {
+        const parts = line.split(',');
+        const firstname = parts[0];
+        const field = parts[3];
+
+        if (!fields[field]) {
+          fields[field] = [];
+        }
+        fields[field].push(firstname);
+      });
+
+      let result = `Number of students: ${total}`;
+      for (const [field, names] of Object.entries(fields)) {
+        result += `\nNumber of students in ${field}: ${names.length}. List: ${names.join(', ')}`;
+      }
+
+      resolve(result);
+    });
+  });
+}
+
+// Root route
 app.get('/', (req, res) => {
   res.send('Hello Holberton School!');
 });
 
+// /students route
 app.get('/students', async (req, res) => {
-  let output = 'This is the list of our students\n';
-
+  const path = process.argv[2]; // passed as argument to the script
   try {
-    const data = await new Promise((resolve, reject) => {
-      const logs = [];
-      const originalLog = console.log;
-
-      console.log = (msg) => logs.push(msg); // temporarily captures logs
-      countStudents(databaseFile)
-        .then(() => {
-            console.log = originalLog; // restore log
-          resolve(logs.join('\n'));
-        })
-        .catch((err) => {
-          console.log = originalLog;
-          reject(err);
-        });
-    });
-
-    output += data;
+    const studentInfo = await countStudents(path);
     res.set('Content-Type', 'text/plain');
-    res.send(output);
-  } catch (error) {
-    res.status(500).send('Cannot load the database');
+    res.send(`This is the list of our students\n${studentInfo}`);
+  } catch (err) {
+    res.status(500).send('This is the list of our students\nCannot load the database');
   }
 });
 
+// Start server
 app.listen(port);
 
 module.exports = app;

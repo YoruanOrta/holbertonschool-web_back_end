@@ -1,5 +1,3 @@
-// 3-read_file_async.js
-
 const fs = require('fs');
 
 function countStudents(path) {
@@ -11,27 +9,31 @@ function countStudents(path) {
       }
 
       const lines = data.split('\n').filter((line) => line.trim() !== '');
-      // nothing, remove the line
-      const students = {};
+      if (lines.length <= 1) {
+        console.log('Number of students: 0');
+        resolve();
+        return;
+      }
 
-      for (const line of lines) {
+      const students = lines.slice(1);
+      console.log(`Number of students: ${students.length}`);
+
+      const fields = {};
+
+      for (const line of students) {
         const parts = line.split(',');
-        if (parts.length >= 4) {
-          const firstname = parts[0];
-          const field = parts[3];
+        const firstName = parts[0];
+        const field = parts[3];
 
-          if (!students[field]) {
-            students[field] = [];
+        if (field) {
+          if (!fields[field]) {
+            fields[field] = [];
           }
-
-          students[field].push(firstname);
+          fields[field].push(firstName);
         }
       }
 
-      const total = Object.values(students).reduce((sum, arr) => sum + arr.length, 0);
-      console.log(`Number of students: ${total}`);
-
-      for (const [field, names] of Object.entries(students)) {
+      for (const [field, names] of Object.entries(fields)) {
         console.log(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`);
       }
 

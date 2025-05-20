@@ -5,7 +5,7 @@ const countStudents = require('./3-read_file_async');
 
 const app = express();
 const port = 1245;
-const databaseFile = process.argv[2]; // argumento desde línea de comandos
+const databaseFile = process.argv[2]; // command-line argument
 
 app.get('/', (req, res) => {
   res.send('Hello Holberton School!');
@@ -19,10 +19,10 @@ app.get('/students', async (req, res) => {
       const logs = [];
       const originalLog = console.log;
 
-      console.log = (msg) => logs.push(msg); // captura logs temporales
+      console.log = (msg) => logs.push(msg); // temporarily captures logs
       countStudents(databaseFile)
         .then(() => {
-          console.log = originalLog; // restaura log
+            console.log = originalLog; // restore log
           resolve(logs.join('\n'));
         })
         .catch((err) => {

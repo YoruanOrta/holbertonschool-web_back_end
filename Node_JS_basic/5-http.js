@@ -22,7 +22,7 @@ const app = http.createServer((req, res) => {
           }
 
           const lines = data.split('\n').filter((line) => line.trim() !== '');
-          lines.shift(); // Elimina el encabezado (header), ya no se guarda en una variable
+            lines.shift(); // Removes the header, it is no longer stored in a variable
 
           const students = {};
 

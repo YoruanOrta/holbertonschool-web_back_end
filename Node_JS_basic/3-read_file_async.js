@@ -11,7 +11,7 @@ function countStudents(path) {
       }
 
       const lines = data.split('\n').filter((line) => line.trim() !== '');
-      // nada, eliminas la línea
+      // nothing, remove the line
       const students = {};
 
       for (const line of lines) {
